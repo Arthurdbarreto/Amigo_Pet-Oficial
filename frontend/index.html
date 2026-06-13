@@ -1,0 +1,50 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AmigoPet - Dashboard</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-top">
+      <h1>🐾 AmigoPet</h1>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+    <img src="./images/dashboard-img.jpg" alt="Dashboard" class="hero-img">
+  </header>
+  <nav class="main-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="tutors.html">Tutores</a>
+    <a href="pets.html">Pets</a>
+    <a href="services.html">Serviços</a>
+    <a href="products.html">Produtos</a>
+    <a href="appointments.html">Agendamentos</a>
+  </nav>
+  <main>
+    <section class="dashboard-cards">
+      <div class="card"><h3>👨‍👩‍👧 Tutores</h3><p>Gerencie tutores</p><a href="tut
+ors.html">Acessar</a></div>
+      <div class="card"><h3>🐶 Pets</h3><p>Cadastre pets</p><a href="pets.html">Acessar</a></div>
+      <div class="card"><h3>🩺 Serviços</h3><p>Serviços oferecidos</p><a href="services.html">Acessar</a></div>
+      <div class="card"><h3>🛍️ Produtos</h3><p>Produtos à venda</p><a href="products.html">Acessar</a></div>
+      <div class="card"><h3>📅 Agendamentos</h3><p>Gerencie agenda</p><a href="appointments.html">Acessar</a></div>
+    </section>
+  </main>
+  <script src="./js/api.js"></script>
+  <script>
+    // Verificar se usuário está logado
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>

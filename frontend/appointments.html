@@ -1,0 +1,101 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendamentos - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-top">
+      <h1>🐾 AmigoPet</h1>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="tutors.html">Tutores</a>
+    <a href="pets.html">Pets</a>
+    <a href="services.html">Serviços</a>
+    <a href="products.html">Produtos</a>
+    <a href="appointments.html" class="active">Agendamentos</a>
+  </nav>
+  <main class="page-content">
+    <section class="page-header">
+      <h2>📅 Gerenciar Agendamentos</h2>
+      <button id="addAppointmentBtn" class="btn-primary">+ Novo Agendamento</button>
+    </section>
+    
+    <section id="appointmentForm" class="form-section" style="display:none;">
+      <h3 id="formTitle">Adicionar Agendamento</h3>
+      <form id="appointmentFormEl">
+        <div class="form-row">
+          <select id="appointmentTutor" required>
+            <option value="">Selecione o Tutor</option>
+          </select>
+          <select id="appointmentPet" required>
+            <option value="">Selecione o Pet</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <select id="appointmentService" required>
+            <option value="">Selecione o Serviço</option>
+          </select>
+          <input type="datetime-local" id="appointmentDateTime" required>
+        </div>
+        <div class="form-row">
+          <select id="appointmentStatus" required>
+            <option value="Agendado">Agendado</option>
+            <option value="Confirmado">Confirmado</option>
+            <option value="Em Atendimento">Em Atendimento</option>
+            <option value="Concluído">Concluído</option>
+            <option value="Cancelado">Cancelado</option>
+          </select>
+          <input type="number" step="0.01" id="appointmentPrice" placeholder="Preço">
+        </div>
+        <textarea id="appointmentNotes" placeholder="Observações" rows="3"></textarea>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="filters">
+      <input type="date" id="filterDate" placeholder="Filtrar por data">
+      <select id="filterStatus">
+        <option value="">Todos os Status</option>
+        <option value="Agendado">Agendado</option>
+        <option value="Confirmado">Confirmado</option>
+        <option value="Em Atendimento">Em Atendimento</option>
+        <option value="Concluído">Concluído</option>
+        <option value="Cancelado">Cancelado</option>
+      </select>
+      <button id="filterBtn" class="btn-secondary">Filtrar</button>
+    </section>
+
+    <section class="data-table">
+      <table id
+      <table id="appointmentsTable">
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Tutor</th>
+            <th>Pet</th>
+            <th>Serviço</th>
+            <th>Status</th>
+            <th>Preço</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="appointmentsBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+  
+  <script src="./js/api.js"></script>
+  <script src="./js/appointments.js"></script>
+</body>
+</html>

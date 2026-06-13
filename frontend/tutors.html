@@ -1,0 +1,69 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tutores - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-top">
+      <h1>🐾 AmigoPet</h1>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="tutors.html" class="active">Tutores</a>
+    <a href="pets.html">Pets</a>
+    <a href="services.html">Serviços</a>
+    <a href="products.html">Produtos</a>
+    <a href="appointments.html">Agendamentos</a>
+  </nav>
+  <main class="page-content">
+    <section class="page-header">
+      <h2>👨‍👩‍👧 Gerenciar Tutores</h2>
+      <button id="addTutorBtn" class="btn-primary">+ Novo Tutor</button>
+    </section>
+    
+    <section id="tutorForm" class="form-section" style="display:none;">
+      <h3 id="formTitle">Adicionar Tutor</h3>
+      <form id="tutorFormEl">
+        <div class="form-row">
+          <input type="text" id="tutorName" placeholder="Nome completo" required>
+          <input type="email" id="tutorEmail" placeholder="E-mail" required>
+        </div>
+        <div class="form-row">
+          <input type="tel" id="tutorPhone" placeholder="Telefone" required>
+          <input type="text" id="tutorCpf" placeholder="CPF" required>
+        </div>
+        <textarea id="tutorAddress" placeholder="Endereço completo" required></textarea>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="data-table">
+      <table id="tutorsTable">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>CPF</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tutorsBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+  
+  <script src="./js/api.js"></script>
+  <script src="./js/tutors.js"></script>
+</body>
+</html>

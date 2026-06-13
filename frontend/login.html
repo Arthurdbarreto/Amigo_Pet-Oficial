@@ -1,0 +1,63 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <section class="login-panel">
+    <div class="login-container">
+      <img src="./images/login-img.jpg" alt="Login AmigoPet" class="login-img">
+      <h2>Acesse sua conta</h2>
+      <form id
+@'
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <section class="login-panel">
+    <div class="login-container">
+      <img src="./images/login-img.jpg" alt="Login AmigoPet" class="login-img">
+      <h2>Acesse sua conta</h2>
+      <form id="loginForm">
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <button type="submit">Entrar</button>
+        <p id="loginMessage"></p>
+        <p class="register-link">Não tem conta? <a href="register.html">Registre-se aqui</a></p>
+      </form>
+    </div>
+  </section>
+  <script src="./js/api.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msgEl = document.getElementById('loginMessage');
+      try {
+        const data = await login(email, password);
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+          msgEl.textContent = 'Login realizado com sucesso! Redirecionando...';
+          msgEl.style.color = '#27ae60';
+          setTimeout(() => window.location.href = 'index.html', 1500);
+        } else {
+          msgEl.textContent = data.message || 'Erro ao fazer login';
+          msgEl.style.color = '#e74c3c';
+        }
+      } catch (err) {
+        msgEl.textContent = 'Erro de conexão com servidor';
+        msgEl.style.color = '#e74c3c';
+      }
+    });
+  </script>
+</body>
+</html>

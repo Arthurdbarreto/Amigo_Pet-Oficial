@@ -1,0 +1,87 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviços - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-top">
+      <h1>🐾 AmigoPet</h1>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="tutors.html">Tutores</a>
+    <a href="pets.html">Pets</a>
+    <a href="services.html" class="active">Serviços</a>
+    <a href="products.html">Produtos</a>
+    <a href="appointments.html">Agendamentos</a>
+  </nav>
+  <main class="page-content">
+    <section class="page-header">
+      <h2>🏥 Gerenciar Serviços</h2>
+      <button id="addServiceBtn" class="btn-primary">+ Novo Serviço</button>
+    </section>
+    
+    <section id="serviceForm" class="form-section"
+@'
+    <section id="serviceForm" class="form-section" style="display:none;">
+      <h3 id="formTitle">Adicionar Serviço</h3>
+      <form id="serviceFormEl">
+        <div class="form-row">
+          <input type="text" id="serviceName" placeholder="Nome do serviço" required>
+          <select id="serviceCategory" required>
+            <option value="">Selecione a categoria</option>
+            <option value="Veterinário">Veterinário</option>
+            <option value="Estética">Estética</option>
+            <option value="Banho">Banho</option>
+            <option value="Tosa">Tosa</option>
+            <option value="Vacina">Vacina</option>
+            <option value="Cirurgia">Cirurgia</option>
+            <option value="Exame">Exame</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="number" step="0.01" id="servicePrice" placeholder="Preço" required>
+          <input type="number" id="serviceDuration" placeholder="Duração (min)" required>
+        </div>
+        <textarea id="serviceDescription" placeholder="Descrição do serviço" rows="3"></textarea>
+        <div class="form-row">
+          <label>
+            <input type="checkbox" id="serviceActive"> Serviço ativo
+          </label>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="data-table">
+      <table id="servicesTable">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Categoria</th>
+            <th>Preço</th>
+            <th>Duração</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="servicesBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+  
+  <script src="./js/api.js"></script>
+  <script src="./js/services.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pets - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-top">
+      <h1>🐾 AmigoPet</h1>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+  </header>
+  <nav class="main-nav">
+    <a href="index.html">Dashboard</a>
+    <a href="tutors.html">Tutores</a>
+    <a href="pets.html" class="active">Pets</a>
+    <a href="services.html">Serviços</a>
+    <a href="products.html">Produtos</a>
+    <a href="appointments.html">Agendamentos</a>
+  </nav>
+  <main class="page-content">
+    <section class="page-header">
+      <h2>🐶 Gerenciar Pets</h2>
+      <button id="addPetBtn" class="btn-primary">+ Novo Pet</button>
+    </section>
+    
+    <section id="petForm" class="form-section" style="display:none;">
+      <h3 id="formTitle">Adicionar Pet</h3>
+      <form id="petFormEl">
+        <div class="form-row">
+          <input type="text" id="petName" placeholder="Nome do pet" required>
+          <select id="petSpecies" required>
+            <option value="">Selecione a espécie</option>
+            <option value="Cão">Cão</option>
+            <option value="Gato">Gato</option>
+            <option value="Pássaro">Pássaro</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="text" id="petBreed" placeholder="Raça" required>
+          <input type="date" id="petBirthDate" required>
+        </div>
+        <div class="form-row">
+          <select id="petGender" required>
+            <option value="">Sexo</option>
+            <option value="Macho">Macho</option>
+            <option value="Fêmea">Fêmea</option>
+          </select>
+          <input type="number" step="0.1" id="petWeight" placeholder="Peso (kg)" required>
+        </div>
+        <div class="form-row">
+          <select id="petTutorId" required>
+            <option value="">Selecione o tutor</option>
+          </select>
+          <input type="text" id="petColor" placeholder="Cor" required>
+        </div>
+        <textarea id="petNotes" placeholder="Observações"></textarea>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Salvar</button>
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="data-table">
+      <table id="petsTable">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Espécie</th>
+            <th>Raça</th>
+            <th>Idade</th>
+            <th>Tutor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="petsBody">
+        </tbody>
+      </table>
+    </section>
+  </main>
+  
+  <script src="./js/api.js"></script>
+  <script src="./js/pets.js">
+@'
+  <script src="./js/pets.js"></script>
+</body>
+</html>

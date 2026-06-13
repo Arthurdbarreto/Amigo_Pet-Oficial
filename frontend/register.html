@@ -1,0 +1,58 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro - AmigoPet</title>
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <section class="login-panel">
+    <div class="login-container">
+      <img src="./images/login-img.jpg" alt="Registro AmigoPet" class="login-img">
+      <h2>Criar Conta</h2>
+      <form id="registerForm">
+        <input type="text" id="name" placeholder="Nome Completo" required>
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="password" id="password" placeholder="Senha" required>
+        <input type="password" id="passwordConfirm" placeholder="Confirmar Senha" required>
+        <button type="submit">Registrar</button>
+        <p id="registerMessage"></p>
+        <p class="login-link">Já tem conta? <a href="login.html">Faça login</a></p>
+      </form>
+    </div>
+  </section>
+  <script src="./js/api.js"></script>
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const passwordConfirm = document.getElementById('passwordConfirm').value;
+      const msgEl = document.getElementById('registerMessage');
+
+      if (password !== passwordConfirm) {
+        msgEl.textContent = 'As senhas não conferem';
+        msgEl.style.color = '#e74c3c';
+        return;
+      }
+
+      try {
+        const data = await register(name, email, password);
+        if (data.id) {
+          msgEl.textContent = 'Usuário registrado com sucesso! Redirecionando...';
+          msgEl.style.color = '#27ae60';
+          setTimeout(() => window.location.href = 'login.html', 2000);
+        } else {
+          msgEl.textContent = data.message || 'Erro ao registrar';
+          msgEl.style.color = '#e74c3c';
+        }
+      } catch (err) {
+        msgEl.textContent = 'Erro de conexão com servidor';
+        msgEl.style.color = '#e74c3c';
+      }
+    });
+  </script>
+</body>
+</html>
