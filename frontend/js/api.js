@@ -1,6 +1,5 @@
 ﻿// URL base da API (backend Express)
-const API_BASE_URL = 'http://localhost:3000';
-
+const API_BASE_URL = 'https://amigo-pet-backend.onrender.com';
 // ---------- AUTENTICAÇÃO ----------
 
 // Login: POST /auth/login { email, password }
