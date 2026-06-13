@@ -1,74 +1,87 @@
-﻿const API_BASE_URL = 'http://localhost:3000';
+﻿// URL base da API (backend Express)
+const API_BASE_URL = 'http://localhost:3000';
 
+// ---------- AUTENTICAÇÃO ----------
+
+// Login: POST /auth/login { email, password }
 async function login(email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
   });
-  return response.json();
+  return res.json();
 }
 
+// Registro: POST /auth/register { name, email, password }
 async function register(name, email, password) {
-  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+  const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, password })
   });
-  return response.json();
+  return res.json();
 }
 
-async function getData(endpoint) {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  if (response.status === 401) {
-    window.location.href = 'login.html';
+// ---------- HELPERS DE AUTH ----------
+
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+function authHeaders() {
+  const token = getToken();
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  };
+}
+
+function handleUnauthorized(status) {
+  if (status === 401 || status === 403) {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    if (!window.location.pathname.endsWith('login.html')) {
+      window.location.href = 'login.html';
+    }
   }
-  return response.json();
+}
+
+// ---------- CRUD GENÉRICO ----------
+
+async function getData(endpoint) {
+  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    headers: authHeaders()
+  });
+  handleUnauthorized(res.status);
+  return res.json();
 }
 
 async function postData(endpoint, data) {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers: authHeaders(),
     body: JSON.stringify(data)
   });
-  if (response.status === 401) {
-    window.location.href = 'login.html';
-  }
-  return response.json();
+  handleUnauthorized(res.status);
+  return res.json();
 }
 
 async function putData(endpoint, data) {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers: authHeaders(),
     body: JSON.stringify(data)
   });
-  if (response.status === 401) {
-    window.location.href = 'login.html';
-  }
-  return response.json();
+  handleUnauthorized(res.status);
+  return res.json();
 }
 
 async function deleteData(endpoint) {
-  const token = localStorage.getItem('token');
-  const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+  const res = await fetch(`${API_BASE_URL}/${endpoint}`, {
     method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${token}` }
+    headers: authHeaders()
   });
-  if (response.status === 401) {
-    window.location.href = 'login.html';
-  }
-  return response.json();
+  handleUnauthorized(res.status);
+  return res.json();
 }

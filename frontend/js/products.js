@@ -1,137 +1,168 @@
-﻿let editingProductId = null;
-
-// Verificar autenticação
-const token = localStorage.getItem('token');
-if (!token) {
+﻿// Proteção de rota
+const tokenProd = localStorage.getItem('token');
+if (!tokenProd) {
   window.location.href = 'login.html';
-@'
 }
 
-// Elementos do DOM
-const addBtn = document.getElementById('addProductBtn');
-const formSection = document.getElementById('productForm');
-const formEl = document.getElementById('productFormEl');
-const cancelBtn = document.getElementById('cancelBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const productsBody = document.getElementById('productsBody');
+// Elementos
+const logoutBtnProd = document.getElementById('logoutBtn');
+const addProductBtn = document.getElementById('addProductBtn');
+const productFormSection = document.getElementById('productFormSection');
+const productFormTitle = document.getElementById('productFormTitle');
+const productForm = document.getElementById('productForm');
+const closeProductFormBtn = document.getElementById('closeProductFormBtn');
+const cancelProductBtn = document.getElementById('cancelProductBtn');
+const productsTableBody = document.getElementById('productsTableBody');
 
-// Event listeners
-addBtn.addEventListener('click', showAddForm);
-cancelBtn.addEventListener('click', hideForm);
-formEl.addEventListener('submit', handleSubmit);
-logoutBtn.addEventListener('click', logout);
+let editingProductId = null;
 
-// Carregar dados ao iniciar
-loadProducts();
+// Logout
+logoutBtnProd.addEventListener('click', () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+});
 
-function showAddForm() {
-  document.getElementById('formTitle').textContent = 'Adicionar Produto';
-  formEl.reset();
-  document.getElementById('productActive').checked = true;
+// Abrir formulário
+addProductBtn.addEventListener('click', () => {
   editingProductId = null;
-  formSection.style.display = 'block';
-}
+  productFormTitle.textContent = 'Adicionar Produto';
+  productForm.reset();
+  productFormSection.classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
-function showEditForm(product) {
-  document.getElementById('formTitle').textContent = 'Editar Produto';
-  document.getElementById('productName').value = product.name;
-  document.getElementById('productCategory').value = product.category;
-  document.getElementById('productPrice').value = product.price;
-  document.getElementById('productStock').value = product.stock;
-  document.getElementById('productBrand').value = product.brand || '';
-  document.getElementById('productBarcode').value = product.barcode || '';
-  document.getElementById('productDescription').value = product.description || '';
-  document.getElementById('productActive').checked = product.active;
-  editingProductId = product.id;
-  formSection.style.display = 'block';
-}
-
-function hideForm() {
-  formSection.style.display = 'none';
+// Fechar formulário
+function hideProductForm() {
+  productFormSection.classList.add('hidden');
   editingProductId = null;
 }
+closeProductFormBtn.addEventListener('click', hideProductForm);
+cancelProductBtn.addEventListener('click', hideProductForm);
 
-async function handleSubmit(e) {
+// Enviar formulário
+productForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const productData = {
-    name: document.getElementById('productName').value,
-    category: document.getElementById('productCategory').value,
-    price: parseFloat(document.getElementById('productPrice').value),
-    stock: parseInt(document.getElementById('productStock').value),
-    brand: document.getElementById('productBrand').value,
-    barcode: document.getElementById('productBarcode').value,
-    description: document.getElementById('productDescription').value,
-    active: document.getElementById('productActive').checked
+
+  const data = {
+    nome: document.getElementById('productNome').value.trim(),
+    descricao: document.getElementById('productDescricao').value.trim(),
+    preco: parseFloat(document.getElementById('productPreco').value),
+    estoque: parseInt(document.getElementById('productEstoque').value, 10)
   };
+
+  if (Number.isNaN(data.preco) || Number.isNaN(data.estoque)) {
+    alert('Preço e estoque devem ser numéricos.');
+    return;
+  }
 
   try {
     if (editingProductId) {
-      await putData(`products/${editingProductId}`, productData);
+      await putData(`products/${editingProductId}`, data);
       alert('Produto atualizado com sucesso!');
     } else {
-      await postData('products', productData);
+      await postData('products', data);
       alert('Produto cadastrado com sucesso!');
     }
-    hideForm();
-    loadProducts();
-  } catch (error) {
-    alert('Erro ao salvar produto: ' + error.message);
+    hideProductForm();
+    await loadProducts();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao salvar produto.');
   }
-}
+});
 
+// Carregar produtos
 async function loadProducts() {
   try {
     const products = await getData('products');
-    displayProducts(products);
-  } catch (error) {
-    alert('Erro ao carregar produtos: ' + error.message);
+    renderProducts(products || []);
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar produtos.');
   }
 }
 
-function displayProducts(products) {
-  productsBody.innerHTML = '';
-  
-  products.forEach(product => {
-    const row = document.createElement('tr');
-    const stockClass = product.stock < 5 ? 'low-stock' : 'normal-stock';
-    row.innerHTML = `
-      <td>${product.name}</td>
-      <td>${product.category}</td>
-      <td>${product.brand || '-'}</td>
-      <td>R$ ${product.price.toFixed(2)}</td>
-      <td class="${stockClass}">${product.stock} un</td>
-      <td>
-        <span class="status ${product.active ? 'active' : 'inactive'}">
-          ${product.active ? 'Ativo' : 'Inativo'}
-        </span>
-      </td>
-      <td class="actions">
-        <button onclick="showEditForm(${JSON.stringify(product).replace(/"/g, '&quot;')})" class="btn-edit">✏️</button>
-        <button onclick="deleteProduct(${product.id})" class="btn-
-@'
-      <td class="actions">
-        <button onclick="showEditForm(${JSON.stringify(product).replace(/"/g, '&quot;')})" class="btn-edit">✏️</button>
-        <button onclick="deleteProduct(${product.id})" class="btn-delete">🗑️</button>
+function renderProducts(products) {
+  productsTableBody.innerHTML = '';
+
+  if (!products.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="5" class="px-4 py-4 text-center text-gray-500 text-sm">
+      Nenhum produto cadastrado ainda.
+    </td>`;
+    productsTableBody.appendChild(tr);
+    return;
+  }
+
+  products.forEach((prod) => {
+    const estoqueClass =
+      prod.estoque <= 0
+        ? 'text-red-600 font-bold'
+        : prod.estoque < 5
+        ? 'text-yellow-600 font-semibold'
+        : 'text-green-700';
+
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50';
+    tr.innerHTML = `
+      <td class="px-4 py-2 text-sm text-gray-800">${prod.nome}</td>
+      <td class="px-4 py-2 text-sm text-gray-600">${/*categoria não está no model, usamos descrição como info extra*/ ''}</td>
+      <td class="px-4 py-2 text-sm text-gray-800">R$ ${Number(prod.preco).toFixed(2)}</td>
+      <td class="px-4 py-2 text-sm ${estoqueClass}">${prod.estoque}</td>
+      <td class="px-4 py-2 text-right text-sm">
+        <button
+          class="inline-flex items-center px-2 py-1 mr-2 rounded bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold"
+          onclick="editProduct(${prod.id})"
+        >
+          ✏️ Editar
+        </button>
+        <button
+          class="inline-flex items-center px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-xs font-semibold"
+          onclick="deleteProduct(${prod.id})"
+        >
+          🗑️ Excluir
+        </button>
       </td>
     `;
-    productsBody.appendChild(row);
+    productsTableBody.appendChild(tr);
   });
 }
 
-async function deleteProduct(id) {
-  if (confirm('Tem certeza que deseja excluir este produto?')) {
-    try {
-      await deleteData(`products/${id}`);
-      alert('Produto excluído com sucesso!');
-      loadProducts();
-    } catch (error) {
-      alert('Erro ao excluir produto: ' + error.message);
-    }
-  }
-}
+// Editar
+window.editProduct = async function (id) {
+  try {
+    const prod = await getData(`products/${id}`);
+    if (!prod) return;
 
-function logout() {
-  localStorage.removeItem('token');
-  window.location.href = 'login.html';
-}
+    editingProductId = prod.id;
+    productFormTitle.textContent = 'Editar Produto';
+
+    document.getElementById('productNome').value = prod.nome || '';
+    document.getElementById('productDescricao').value = prod.descricao || '';
+    document.getElementById('productPreco').value = prod.preco || '';
+    document.getElementById('productEstoque').value = prod.estoque || '';
+
+    productFormSection.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar dados do produto.');
+  }
+};
+
+// Deletar
+window.deleteProduct = async function (id) {
+  if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+  try {
+    await deleteData(`products/${id}`);
+    alert('Produto excluído com sucesso!');
+    await loadProducts();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir produto.');
+  }
+};
+
+// Inicialização
+loadProducts();

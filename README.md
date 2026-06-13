@@ -152,7 +152,7 @@ JWT Token: Armazenado em localStorage, válido por 8 horas
 Senha: Criptografada com bcrypt
 CORS: Habilitado para requisições do frontend
 Banco de Dados: SQLite (arquivo: database.sqlite)
-Imagens: Coloque os JPGs na pasta frontend/images/
+Imagens: Coloque os JPEGs na pasta frontend/images/
 🔒 Segurança
 ✅ Autenticação via JWT
 ✅ Senhas com hash bcrypt

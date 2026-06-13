@@ -1,128 +1,158 @@
-﻿let editingServiceId = null;
-
-// Verificar autenticação
-const token = localStorage.getItem('token');
-if (!token) {
+﻿// Proteção de rota
+const tokenServ = localStorage.getItem('token');
+if (!tokenServ) {
   window.location.href = 'login.html';
 }
 
-// Elementos do DOM
-const addBtn = document.getElementById('addServiceBtn');
-const formSection = document.getElementById('serviceForm');
-const formEl = document.getElementById('serviceFormEl');
-const cancelBtn = document.getElementById('cancelBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const servicesBody = document.getElementById('servicesBody');
+// Elementos
+const logoutBtnServ = document.getElementById('logoutBtn');
+const addServiceBtn = document.getElementById('addServiceBtn');
+const serviceFormSection = document.getElementById('serviceFormSection');
+const serviceFormTitle = document.getElementById('serviceFormTitle');
+const serviceForm = document.getElementById('serviceForm');
+const closeServiceFormBtn = document.getElementById('closeServiceFormBtn');
+const cancelServiceBtn = document.getElementById('cancelServiceBtn');
+const servicesTableBody = document.getElementById('servicesTableBody');
 
-// Event listeners
-addBtn.addEventListener('click', showAddForm);
-cancelBtn.addEventListener('click', hideForm);
-formEl.addEventListener('submit', handleSubmit);
-logoutBtn.addEventListener('click', logout);
+let editingServiceId = null;
 
-// Carregar dados ao iniciar
-loadServices();
+// Logout
+logoutBtnServ.addEventListener('click', () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+});
 
-function showAddForm() {
-  document.getElementById('formTitle').textContent = 'Adicionar Serviço';
-  formEl.reset();
-  document.getElementById('serviceActive').checked = true;
+// Abrir formulário
+addServiceBtn.addEventListener('click', () => {
   editingServiceId = null;
-  formSection.style.display = 'block';
-}
+  serviceFormTitle.textContent = 'Adicionar Serviço';
+  serviceForm.reset();
+  serviceFormSection.classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
-function showEditForm(service) {
-  document.getElementById('formTitle').textContent = 'Editar Serviço';
-  document.getElementById('serviceName').value = service.name;
-  document.getElementById('serviceCategory').value
-@'
-  document.getElementById('serviceCategory').value = service.category;
-  document.getElementById('servicePrice').value = service.price;
-  document.getElementById('serviceDuration').value = service.duration;
-  document.getElementById('serviceDescription').value = service.description || '';
-  document.getElementById('serviceActive').checked = service.active;
-  editingServiceId = service.id;
-  formSection.style.display = 'block';
-}
-
-function hideForm() {
-  formSection.style.display = 'none';
+// Fechar formulário
+function hideServiceForm() {
+  serviceFormSection.classList.add('hidden');
   editingServiceId = null;
 }
+closeServiceFormBtn.addEventListener('click', hideServiceForm);
+cancelServiceBtn.addEventListener('click', hideServiceForm);
 
-async function handleSubmit(e) {
+// Submit formulário
+serviceForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const serviceData = {
-    name: document.getElementById('serviceName').value,
-    category: document.getElementById('serviceCategory').value,
-    price: parseFloat(document.getElementById('servicePrice').value),
-    duration: parseInt(document.getElementById('serviceDuration').value),
-    description: document.getElementById('serviceDescription').value,
-    active: document.getElementById('serviceActive').checked
+
+  const data = {
+    nome: document.getElementById('serviceNome').value.trim(),
+    descricao: document.getElementById('serviceDescricao').value.trim(),
+    preco: parseFloat(document.getElementById('servicePreco').value)
   };
 
-  try {
+  if (!data.nome || Number.isNaN(data.preco)) {
+    alert('Preencha nome e preço corretamente.');
+    return;
+  }
+
+  try:
     if (editingServiceId) {
-      await putData(`services/${editingServiceId}`, serviceData);
+      await putData(`services/${editingServiceId}`, data);
       alert('Serviço atualizado com sucesso!');
     } else {
-      await postData('services', serviceData);
+      await postData('services', data);
       alert('Serviço cadastrado com sucesso!');
     }
-    hideForm();
-    loadServices();
-  } catch (error) {
-    alert('Erro ao salvar serviço: ' + error.message);
+    hideServiceForm();
+    await loadServices();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao salvar serviço.');
   }
-}
+});
 
+// Carregar serviços
 async function loadServices() {
   try {
     const services = await getData('services');
-    displayServices(services);
-  } catch (error) {
-    alert('Erro ao carregar serviços: ' + error.message);
+    renderServices(services || []);
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar serviços.');
   }
 }
 
-function displayServices(services) {
-  servicesBody.innerHTML = '';
-  
-  services.forEach(service => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${service.name}</td>
-      <td>${service.category}</td>
-      <td>R$ ${service.price.toFixed(2)}</td>
-      <td>${service.duration} min</td>
-      <td>
-        <span class="status ${service.active ? 'active' : 'inactive'}">
-          ${service.active ? 'Ativo' : 'Inativo'}
-        </span>
-      </td>
-      <td class="actions">
-        <button onclick="showEditForm(${JSON.stringify(service).replace(/"/g, '&quot;')})" class="btn-edit">✏️</button>
-        <button onclick="deleteService(${service.id})" class="btn-delete">🗑️</button>
+function renderServices(services) {
+  servicesTableBody.innerHTML = '';
+
+  if (!services.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" class="px-4 py-4 text-center text-gray-500 text-sm">
+      Nenhum serviço cadastrado ainda.
+    </td>`;
+    servicesTableBody.appendChild(tr);
+    return;
+  }
+
+  services.forEach((svc) => {
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50';
+    tr.innerHTML = `
+      <td class="px-4 py-2 text-sm text-gray-800">${svc.nome}</td>
+      <td class="px-4 py-2 text-sm text-gray-600 break-words">${svc.descricao || '—'}</td>
+      <td class="px-4 py-2 text-sm text-gray-800">R$ ${Number(svc.preco).toFixed(2)}</td>
+      <td class="px-4 py-2 text-right text-sm">
+        <button
+          class="inline-flex items-center px-2 py-1 mr-2 rounded bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold"
+          onclick="editService(${svc.id})"
+        >
+          ✏️ Editar
+        </button>
+        <button
+          class="inline-flex items-center px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-xs font-semibold"
+          onclick="deleteService(${svc.id})"
+        >
+          🗑️ Excluir
+        </button>
       </td>
     `;
-    servicesBody.appendChild(row);
+    servicesTableBody.appendChild(tr);
   });
 }
 
-async function deleteService(id) {
-  if (confirm('Tem certeza que deseja excluir este serviço?')) {
-    try {
-      await deleteData(`services/${id}`);
-      alert('Serviço excluído com sucesso!');
-      loadServices();
-    } catch (error) {
-      alert('Erro ao excluir serviço: ' + error.message);
-    }
-  }
-}
+// Editar
+window.editService = async function (id) {
+  try {
+    const svc = await getData(`services/${id}`);
+    if (!svc) return;
 
-function logout() {
-  localStorage.removeItem('token');
-  window.location.href = 'login.html';
-}
+    editingServiceId = svc.id;
+    serviceFormTitle.textContent = 'Editar Serviço';
+
+    document.getElementById('serviceNome').value = svc.nome || '';
+    document.getElementById('serviceDescricao').value = svc.descricao || '';
+    document.getElementById('servicePreco').value = svc.preco || '';
+
+    serviceFormSection.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar dados do serviço.');
+  }
+};
+
+// Deletar
+window.deleteService = async function (id) {
+  if (!confirm('Tem certeza que deseja excluir este serviço?')) return;
+  try {
+    await deleteData(`services/${id}`);
+    alert('Serviço excluído com sucesso!');
+    await loadServices();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir serviço.');
+  }
+};
+
+// Inicialização
+loadServices();

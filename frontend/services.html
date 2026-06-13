@@ -1,86 +1,152 @@
 ﻿<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Serviços - AmigoPet</title>
-  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header class="main-header">
-    <div class="header-top">
-      <h1>🐾 AmigoPet</h1>
-      <button id="logoutBtn" class="logout-btn">Sair</button>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🐾</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold text-purple-600">AmigoPet</h1>
+          <p class="text-xs text-gray-500 hidden sm:block">Gestão de serviços</p>
+        </div>
+      </div>
+      <button
+        id="logoutBtn"
+        class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 md:px-6 rounded-lg text-sm md:text-base transition-all transform hover:scale-105 active:scale-95"
+      >
+        🚪 Sair
+      </button>
     </div>
-  </header>
-  <nav class="main-nav">
-    <a href="index.html">Dashboard</a>
-    <a href="tutors.html">Tutores</a>
-    <a href="pets.html">Pets</a>
-    <a href="services.html" class="active">Serviços</a>
-    <a href="products.html">Produtos</a>
-    <a href="appointments.html">Agendamentos</a>
   </nav>
-  <main class="page-content">
-    <section class="page-header">
-      <h2>🏥 Gerenciar Serviços</h2>
-      <button id="addServiceBtn" class="btn-primary">+ Novo Serviço</button>
+
+  <!-- Menu -->
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 overflow-x-auto">
+      <div class="flex gap-4 md:gap-6">
+        <a href="index.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">📊 Dashboard</a>
+        <a href="tutors.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">👨‍👩‍👧 Tutores</a>
+        <a href="pets.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">🐶 Pets</a>
+        <a href="services.html" class="py-3 border-b-2 border-purple-600 text-purple-600 font-semibold whitespace-nowrap">🏥 Serviços</a>
+        <a href="products.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">🛍️ Produtos</a>
+        <a href="appointments.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">📅 Agendamentos</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Header da página -->
+    <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Serviços</h2>
+        <p class="text-sm text-gray-600">Gerencie banho, tosa, consultas, vacinas e outros serviços.</p>
+      </div>
+      <button
+        id="addServiceBtn"
+        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-sm md:text-base transition-all transform hover:scale-105 active:scale-95"
+      >
+        ➕ Novo Serviço
+      </button>
     </section>
-    
-    <section id="serviceForm" class="form-section"
-@'
-    <section id="serviceForm" class="form-section" style="display:none;">
-      <h3 id="formTitle">Adicionar Serviço</h3>
-      <form id="serviceFormEl">
-        <div class="form-row">
-          <input type="text" id="serviceName" placeholder="Nome do serviço" required>
-          <select id="serviceCategory" required>
-            <option value="">Selecione a categoria</option>
-            <option value="Veterinário">Veterinário</option>
-            <option value="Estética">Estética</option>
-            <option value="Banho">Banho</option>
-            <option value="Tosa">Tosa</option>
-            <option value="Vacina">Vacina</option>
-            <option value="Cirurgia">Cirurgia</option>
-            <option value="Exame">Exame</option>
-            <option value="Outro">Outro</option>
-          </select>
+
+    <!-- Formulário -->
+    <section id="serviceFormSection" class="bg-white rounded-xl shadow-md p-4 md:p-6 hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="serviceFormTitle" class="text-lg font-bold text-gray-800">Adicionar Serviço</h3>
+        <button id="closeServiceFormBtn" class="text-gray-500 hover:text-red-500 text-xl leading-none">✖</button>
+      </div>
+
+      <form id="serviceForm" class="grid gap-4 md:grid-cols-2">
+        <!-- Nome -->
+        <div class="md:col-span-1">
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="serviceNome">Nome</label>
+          <input
+            id="serviceNome"
+            type="text"
+            required
+            placeholder="Ex: Banho, Tosa, Consulta..."
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          />
         </div>
-        <div class="form-row">
-          <input type="number" step="0.01" id="servicePrice" placeholder="Preço" required>
-          <input type="number" id="serviceDuration" placeholder="Duração (min)" required>
+
+        <!-- Preço -->
+        <div class="md:col-span-1">
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="servicePreco">Preço (R$)</label>
+          <input
+            id="servicePreco"
+            type="number"
+            step="0.01"
+            min="0"
+            required
+            placeholder="Ex: 49.90"
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          />
         </div>
-        <textarea id="serviceDescription" placeholder="Descrição do serviço" rows="3"></textarea>
-        <div class="form-row">
-          <label>
-            <input type="checkbox" id="serviceActive"> Serviço ativo
-          </label>
+
+        <!-- Descrição -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="serviceDescricao">Descrição</label>
+          <textarea
+            id="serviceDescricao"
+            rows="2"
+            placeholder="Detalhe o serviço (tempo médio, indicações, observações...)"
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm resize-y focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          ></textarea>
         </div>
-        <div class="form-buttons">
-          <button type="submit" class="btn-primary">Salvar</button>
-          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+
+        <!-- Ações -->
+        <div class="md:col-span-2 flex justify-end gap-3 mt-2">
+          <button
+            type="button"
+            id="cancelServiceBtn"
+            class="border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg text-sm transition"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition"
+          >
+            Salvar
+          </button>
         </div>
       </form>
     </section>
 
-    <section class="data-table">
-      <table id="servicesTable">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Categoria</th>
-            <th>Preço</th>
-            <th>Duração</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="servicesBody">
-        </tbody>
-      </table>
+    <!-- Tabela -->
+    <section class="bg-white rounded-xl shadow-md p-4 md:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-800">Lista de Serviços</h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Nome</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Descrição</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Preço</th>
+              <th class="px-4 py-2 text-right font-semibold text-gray-700">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="servicesTableBody" class="divide-y divide-gray-100">
+            <!-- via JS -->
+          </tbody>
+        </table>
+      </div>
     </section>
+
   </main>
-  
+
   <script src="./js/api.js"></script>
   <script src="./js/services.js"></script>
 </body>

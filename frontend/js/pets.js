@@ -1,159 +1,191 @@
-﻿let editingPetId = null;
-
-// Verificar autenticação
-const token = localStorage.getItem('token');
-if (!token) {
+﻿// Proteção de rota
+const tokenPet = localStorage.getItem('token');
+if (!tokenPet) {
   window.location.href = 'login.html';
 }
 
-// Elementos do DOM
-const addBtn = document.getElementById('addPetBtn');
-const formSection = document.getElementById('petForm');
-const formEl = document.getElementById('petFormEl');
-const cancelBtn = document.getElementById('cancelBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const petsBody = document.getElementById('petsBody');
-const tutorSelect = document.getElementById('petTutorId');
+// Elementos
+const logoutBtnPet = document.getElementById('logoutBtn');
+const addPetBtn = document.getElementById('addPetBtn');
+const petFormSection = document.getElementById('petFormSection');
+const petFormTitle = document.getElementById('petFormTitle');
+const petForm = document.getElementById('petForm');
+const closePetFormBtn = document.getElementById('closePetFormBtn');
+const cancelPetBtn = document.getElementById('cancelPetBtn');
+const petsTableBody = document.getElementById('petsTableBody');
+const petTutorSelect = document.getElementById('petTutorId');
 
-// Event listeners
-addBtn.addEventListener('click', showAddForm);
-cancelBtn.addEventListener('click', hideForm);
-formEl.addEventListener('submit', handleSubmit);
-logoutBtn.addEventListener('click', logout);
+let editingPetId = null;
+let tutorsCache = [];
 
-// Carregar dados ao iniciar
-loadPets();
-loadTutors();
+// Logout
+logoutBtnPet.addEventListener('click', () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+});
 
-function showAddForm() {
-  document.getElementById('formTitle').textContent = 'Adicionar Pet';
-  formEl.reset();
+// Abrir formulário
+addPetBtn.addEventListener('click', () => {
   editingPetId = null;
-  formSection.style.display = 'block';
-}
+  petFormTitle.textContent = 'Adicionar Pet';
+  petForm.reset();
+  petFormSection.classList.remove('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
-function showEditForm(pet) {
-  document.getElementById('formTitle').textContent = 'Editar Pet';
-  document.getElementById('petName').value = pet.name;
-  document.getElementById('petSpecies').value = pet.species;
-  document.getElementById('petBreed').value = pet.breed;
-  document.getElementById('petBirthDate').value = pet.birth_date.split('T')[0];
-  document.getElementById('petGender').value = pet.gender;
-  document.getElementById('petWeight').value = pet.weight;
-  document.getElementById('petTutorId').value = pet.tutor_id;
-  document.getElementById('petColor').value = pet.color;
-  document.getElementById('petNotes').value = pet.notes || '';
-  editingPetId = pet.id;
-  formSection.style.display = 'block';
-}
-
-function hideForm() {
-  formSection.style.display = 'none';
+// Fechar form
+function hidePetForm() {
+  petFormSection.classList.add('hidden');
   editingPetId = null;
 }
+closePetFormBtn.addEventListener('click', hidePetForm);
+cancelPetBtn.addEventListener('click', hidePetForm);
 
-async function handleSubmit(e) {
+// Carregar tutores para select
+async function loadTutorsToSelect() {
+  try {
+    const tutors = await getData('tutors');
+    tutorsCache = tutors || [];
+    petTutorSelect.innerHTML = '<option value="">Selecione o tutor</option>';
+    tutorsCache.forEach((t) => {
+      const opt = document.createElement('option');
+      opt.value = t.id;
+      opt.textContent = t.nome;
+      petTutorSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar tutores para o select.');
+  }
+}
+
+// Submit form
+petForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const petData = {
-    name: document.getElementById('petName').value,
-    species: document.getElementById('petSpecies').value,
-    breed: document.getElementById('petBreed').value,
-    birth_date: document.getElementById('petBirthDate').value,
-    gender: document.getElementById('petGender').value,
-    weight: document.getElementById('petWeight').value,
-    tutor_id: document.getElementById('petTutorId').value,
-    color: document.getElementById('petColor').value,
-    notes: document.getElementById('petNotes').value
+
+  const data = {
+    nome: document.getElementById('petNome').value.trim(),
+    especie: document.getElementById('petEspecie').value,
+    raca: document.getElementById('petRaca').value.trim(),
+    sexo: document.getElementById('petSexo').value,
+    tutorId: Number(document.getElementById('petTutorId').value),
+    // obs não está no model, mas se quiser pode adicionar campo no backend depois
   };
+
+  if (!data.tutorId) {
+    alert('Selecione um tutor para o pet.');
+    return;
+  }
 
   try {
     if (editingPetId) {
-      await putData(`pets/${editingPetId}`, petData);
+      await putData(`pets/${editingPetId}`, data);
       alert('Pet atualizado com sucesso!');
     } else {
-      await postData('pets', petData);
+      await postData('pets', data);
       alert('Pet cadastrado com sucesso!');
     }
-    hideForm();
-    loadPets();
-  } catch (error) {
-    alert('Erro ao salvar pet: ' + error.message);
+    hidePetForm();
+    await loadPets();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao salvar pet.');
   }
-}
+});
 
+// Carregar lista de pets
 async function loadPets() {
   try {
     const pets = await getData('pets');
-    displayPets(pets);
-  } catch (error) {
-    alert('Erro ao carregar pets: ' + error.message);
+    renderPets(pets || []);
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar pets.');
   }
 }
 
-async function loadTutors() {
-  try {
-    const tutors = await getData('tutors');
-    tutorSelect.innerHTML = '<option value="">Selecione o tutor</option>';
-    tutors.forEach(tutor => {
-      tutorSelect.innerHTML += `<option value="${
-@'
-      tutorSelect.innerHTML += `<option value="${tutor.id}">${tutor.name}</option>`;
-    });
-  } catch (error) {
-    console.error('Erro ao carregar tutores:', error);
-  }
-}
+function renderPets(pets) {
+  petsTableBody.innerHTML = '';
 
-function displayPets(pets) {
-  petsBody.innerHTML = '';
-  
-  pets.forEach(pet => {
-    const age = calculateAge(pet.birth_date);
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${pet.name}</td>
-      <td>${pet.species}</td>
-      <td>${pet.breed}</td>
-      <td>${age}</td>
-      <td>${pet.tutor_name || 'N/A'}</td>
-      <td class="actions">
-        <button onclick="showEditForm(${JSON.stringify(pet).replace(/"/g, '&quot;')})" class="btn-edit">✏️</button>
-        <button onclick="deletePet(${pet.id})" class="btn-delete">🗑️</button>
+  if (!pets.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="6" class="px-4 py-4 text-center text-gray-500 text-sm">
+      Nenhum pet cadastrado ainda.
+    </td>`;
+    petsTableBody.appendChild(tr);
+    return;
+  }
+
+  pets.forEach((pet) => {
+    const tutor = tutorsCache.find((t) => t.id === pet.tutorId);
+    const tutorNome = tutor ? tutor.nome : '—';
+
+    const tr = document.createElement('tr');
+    tr.className = 'hover:bg-gray-50';
+    tr.innerHTML = `
+      <td class="px-4 py-2 text-sm text-gray-800">${pet.nome}</td>
+      <td class="px-4 py-2 text-sm text-gray-600">${pet.especie}</td>
+      <td class="px-4 py-2 text-sm text-gray-600">${pet.raca || '—'}</td>
+      <td class="px-4 py-2 text-sm text-gray-600">${pet.sexo}</td>
+      <td class="px-4 py-2 text-sm text-gray-800">${tutorNome}</td>
+      <td class="px-4 py-2 text-right text-sm">
+        <button
+          class="inline-flex items-center px-2 py-1 mr-2 rounded bg-yellow-400 hover:bg-yellow-500 text-white text-xs font-semibold"
+          onclick="editPet(${pet.id})"
+        >
+          ✏️ Editar
+        </button>
+        <button
+          class="inline-flex items-center px-2 py-1 rounded bg-red-500 hover:bg-red-600 text-white text-xs font-semibold"
+          onclick="deletePet(${pet.id})"
+        >
+          🗑️ Excluir
+        </button>
       </td>
     `;
-    petsBody.appendChild(row);
+    petsTableBody.appendChild(tr);
   });
 }
 
-function calculateAge(birthDate) {
-  const birth = new Date(birthDate);
-  const now = new Date();
-  const diffTime = Math.abs(now - birth);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return months > 0 ? `${months} mês(es)` : `${diffDays} dias`;
-  } else {
-    const years = Math.floor(diffDays / 365);
-    return `${years} ano(s)`;
-  }
-}
+// Editar
+window.editPet = async function (id) {
+  try {
+    const pet = await getData(`pets/${id}`);
+    if (!pet) return;
 
-async function deletePet(id) {
-  if (confirm('Tem certeza que deseja excluir este pet?')) {
-    try {
-      await deleteData(`pets/${id}`);
-      alert('Pet excluído com sucesso!');
-      loadPets();
-    } catch (error) {
-      alert('Erro ao excluir pet: ' + error.message);
-    }
-  }
-}
+    editingPetId = pet.id;
+    petFormTitle.textContent = 'Editar Pet';
 
-function logout() {
-  localStorage.removeItem('token');
-  window.location.href = 'login.html';
-}
+    document.getElementById('petNome').value = pet.nome || '';
+    document.getElementById('petEspecie').value = pet.especie || '';
+    document.getElementById('petRaca').value = pet.raca || '';
+    document.getElementById('petSexo').value = pet.sexo || '';
+    document.getElementById('petTutorId').value = pet.tutorId || '';
+
+    petFormSection.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao carregar dados do pet.');
+  }
+};
+
+// Deletar
+window.deletePet = async function (id) {
+  if (!confirm('Tem certeza que deseja excluir este pet?')) return;
+  try {
+    await deleteData(`pets/${id}`);
+    alert('Pet excluído com sucesso!');
+    await loadPets();
+  } catch (err) {
+    console.error(err);
+    alert('Erro ao excluir pet.');
+  }
+};
+
+// Inicialização
+(async function initPets() {
+  await loadTutorsToSelect();
+  await loadPets();
+})();

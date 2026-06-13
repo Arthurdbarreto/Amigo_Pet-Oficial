@@ -1,92 +1,196 @@
 ﻿<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pets - AmigoPet</title>
-  <link rel="stylesheet" href="./css/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header class="main-header">
-    <div class="header-top">
-      <h1>🐾 AmigoPet</h1>
-      <button id="logoutBtn" class="logout-btn">Sair</button>
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🐾</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold text-purple-600">AmigoPet</h1>
+          <p class="text-xs text-gray-500 hidden sm:block">Gestão de pets</p>
+        </div>
+      </div>
+      <button
+        id="logoutBtn"
+        class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 md:px-6 rounded-lg text-sm md:text-base transition-all transform hover:scale-105 active:scale-95"
+      >
+        🚪 Sair
+      </button>
     </div>
-  </header>
-  <nav class="main-nav">
-    <a href="index.html">Dashboard</a>
-    <a href="tutors.html">Tutores</a>
-    <a href="pets.html" class="active">Pets</a>
-    <a href="services.html">Serviços</a>
-    <a href="products.html">Produtos</a>
-    <a href="appointments.html">Agendamentos</a>
   </nav>
-  <main class="page-content">
-    <section class="page-header">
-      <h2>🐶 Gerenciar Pets</h2>
-      <button id="addPetBtn" class="btn-primary">+ Novo Pet</button>
+
+  <!-- Menu -->
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 overflow-x-auto">
+      <div class="flex gap-4 md:gap-6">
+        <a href="index.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">📊 Dashboard</a>
+        <a href="tutors.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">👨‍👩‍👧 Tutores</a>
+        <a href="pets.html" class="py-3 border-b-2 border-purple-600 text-purple-600 font-semibold whitespace-nowrap">🐶 Pets</a>
+        <a href="services.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">🏥 Serviços</a>
+        <a href="products.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">🛍️ Produtos</a>
+        <a href="appointments.html" class="py-3 text-gray-600 hover:text-purple-600 font-semibold whitespace-nowrap">📅 Agendamentos</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Header da página -->
+    <section class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">Pets</h2>
+        <p class="text-sm text-gray-600">Cadastre e gerencie os animais atendidos.</p>
+      </div>
+      <button
+        id="addPetBtn"
+        class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-sm md:text-base transition-all transform hover:scale-105 active:scale-95"
+      >
+        ➕ Novo Pet
+      </button>
     </section>
-    
-    <section id="petForm" class="form-section" style="display:none;">
-      <h3 id="formTitle">Adicionar Pet</h3>
-      <form id="petFormEl">
-        <div class="form-row">
-          <input type="text" id="petName" placeholder="Nome do pet" required>
-          <select id="petSpecies" required>
-            <option value="">Selecione a espécie</option>
+
+    <!-- Formulário -->
+    <section id="petFormSection" class="bg-white rounded-xl shadow-md p-4 md:p-6 hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 id="petFormTitle" class="text-lg font-bold text-gray-800">Adicionar Pet</h3>
+        <button id="closePetFormBtn" class="text-gray-500 hover:text-red-500 text-xl leading-none">✖</button>
+      </div>
+
+      <form id="petForm" class="grid gap-4 md:grid-cols-2">
+        <!-- Nome -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petNome">Nome do pet</label>
+          <input
+            id="petNome"
+            type="text"
+            required
+            placeholder="Ex: Rex"
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          />
+        </div>
+
+        <!-- Espécie -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petEspecie">Espécie</label>
+          <select
+            id="petEspecie"
+            required
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          >
+            <option value="">Selecione</option>
             <option value="Cão">Cão</option>
             <option value="Gato">Gato</option>
             <option value="Pássaro">Pássaro</option>
+            <option value="Roedor">Roedor</option>
             <option value="Outro">Outro</option>
           </select>
         </div>
-        <div class="form-row">
-          <input type="text" id="petBreed" placeholder="Raça" required>
-          <input type="date" id="petBirthDate" required>
+
+        <!-- Raça -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petRaca">Raça</label>
+          <input
+            id="petRaca"
+            type="text"
+            placeholder="Ex: SRD, Poodle..."
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          />
         </div>
-        <div class="form-row">
-          <select id="petGender" required>
-            <option value="">Sexo</option>
-            <option value="Macho">Macho</option>
-            <option value="Fêmea">Fêmea</option>
+
+        <!-- Sexo -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petSexo">Sexo</label>
+          <select
+            id="petSexo"
+            required
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          >
+            <option value="">Selecione</option>
+            <option value="M">Macho</option>
+            <option value="F">Fêmea</option>
           </select>
-          <input type="number" step="0.1" id="petWeight" placeholder="Peso (kg)" required>
         </div>
-        <div class="form-row">
-          <select id="petTutorId" required>
+
+        <!-- Tutor -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petTutorId">Tutor</label>
+          <select
+            id="petTutorId"
+            required
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          >
             <option value="">Selecione o tutor</option>
+            <!-- options via JS -->
           </select>
-          <input type="text" id="petColor" placeholder="Cor" required>
         </div>
-        <textarea id="petNotes" placeholder="Observações"></textarea>
-        <div class="form-buttons">
-          <button type="submit" class="btn-primary">Salvar</button>
-          <button type="button" id="cancelBtn" class="btn-secondary">Cancelar</button>
+
+        <!-- Observações -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-gray-700 mb-1" for="petObs">Observações</label>
+          <textarea
+            id="petObs"
+            rows="2"
+            placeholder="Informações adicionais (doenças, comportamento, etc.)"
+            class="w-full border-2 border-gray-200 rounded-lg px-3 py-2 text-sm resize-y focus:outline-none focus:border-purple-600 focus:ring-2 focus:ring-purple-200"
+          ></textarea>
+        </div>
+
+        <!-- Ações -->
+        <div class="md:col-span-2 flex justify-end gap-3 mt-2">
+          <button
+            type="button"
+            id="cancelPetBtn"
+            class="border border-gray-300 text-gray-700 hover:bg-gray-100 font-semibold py-2 px-4 rounded-lg text-sm transition"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition"
+          >
+            Salvar
+          </button>
         </div>
       </form>
     </section>
 
-    <section class="data-table">
-      <table id="petsTable">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Espécie</th>
-            <th>Raça</th>
-            <th>Idade</th>
-            <th>Tutor</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="petsBody">
-        </tbody>
-      </table>
+    <!-- Tabela -->
+    <section class="bg-white rounded-xl shadow-md p-4 md:p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-800">Lista de Pets</h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Nome</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Espécie</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Raça</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Sexo</th>
+              <th class="px-4 py-2 text-left font-semibold text-gray-700">Tutor</th>
+              <th class="px-4 py-2 text-right font-semibold text-gray-700">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="petsTableBody" class="divide-y divide-gray-100">
+            <!-- via JS -->
+          </tbody>
+        </table>
+      </div>
     </section>
+
   </main>
-  
+
   <script src="./js/api.js"></script>
-  <script src="./js/pets.js">
-@'
   <script src="./js/pets.js"></script>
 </body>
 </html>
