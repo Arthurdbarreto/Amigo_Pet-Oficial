@@ -4,34 +4,6 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-/**
- * @swagger
- * /services:
- *   get:
- *     summary: Listar todos os serviços
- *     tags: [Serviços]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200: { description: Lista de serviços }
- *   post:
- *     summary: Criar novo serviço
- *     tags: [Serviços]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               nome: { type: string }
- *               descricao: { type: string }
- *               preco: { type: number }
- *     responses:
- *       201: { description: Serviço criado }
- */
 router.get('/', auth, async (req, res) => {
   try {
     const services = await Service.findAll();
@@ -50,57 +22,6 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /services/{id}:
- *   get:
- *     summary: Obter serviço por ID
- *     tags: [Serviços]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: integer }
- *     responses:
- *       200: { description: Serviço encontrado }
- *   put:
- *     summary: Atualizar serviço
- *     tags: [Serviços]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: integer }
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               nome: { type: string }
- *               descricao: { type: string }
- *               preco: { type: number }
- *     responses:
- *       200: { description: Serviço atualizado }
- *   delete:
- *     summary: Deletar servi
-ço
- *     tags: [Serviços]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema: { type: integer }
- *     responses:
- *       200: { description: Serviço deletado }
- */
 router.get('/:id', auth, async (req, res) => {
   try {
     const service = await Service.findByPk(req.params.id);
@@ -134,3 +55,4 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 module.exports = router;
+
