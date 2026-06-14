@@ -7,6 +7,6 @@ module.exports = (sequelize) => {
     especie: { type: DataTypes.STRING, allowNull: false },
     raca: { type: DataTypes.STRING },
     sexo: { type: DataTypes.ENUM('M','F'), allowNull: false },
-    tutorId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'Tutors', key: 'id' } }
+    tutorId: { type: DataTypes.INTEGER, allowNull: false }
   }, { timestamps: true });
 };
