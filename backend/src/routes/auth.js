@@ -83,6 +83,28 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Erro ao fazer login', error: err.message });
   }
+  // ... cima do arquivo permanece igual
+
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'E-mail é obrigatório' });
+
+    const user = await User.findOne({ where: { email } });
+
+    // Em produção você geraria um token e enviaria e-mail.
+    // Aqui só respondemos 200 mesmo se não existir, por segurança.
+    if (!user) {
+      return res.json({ message: 'Se o e-mail existir, você receberá instruções em instantes.' });
+    }
+
+    // TODO: gerar token de reset e enviar email.
+    return res.json({ message: 'Se o e-mail existir, você receberá instruções em instantes.' });
+  } catch (err) {
+    res.status(500).json({ message: 'Erro ao processar recuperação de senha', error: err.message });
+  }
+});
+
 });
 
 module.exports = router;
