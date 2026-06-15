@@ -12,24 +12,10 @@ const SECRET = process.env.JWT_SECRET || 'supersecret_amigopet_2024';
  *   post:
  *     summary: Registrar novo usuário
  *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name: { type: string }
- *               email: { type: string }
- *               password: { type: string }
- *     responses:
- *       201: { description: Usuário criado }
- *       400: { description: Erro na criação }
  */
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password } =
- req.body;
+    const { name, email, password } = req.body;
 
     const exists = await User.findOne({ where: { email } });
     if (exists) {
@@ -51,18 +37,6 @@ router.post('/register', async (req, res) => {
  *   post:
  *     summary: Fazer login
  *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email: { type: string }
- *               password: { type: string }
- *     responses:
- *       200: { description: Login bem-sucedido, retorna token }
- *       400: { description: Credenciais inválidas }
  */
 router.post('/login', async (req, res) => {
   try {
@@ -83,8 +57,15 @@ router.post('/login', async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: 'Erro ao fazer login', error: err.message });
   }
-  // ... cima do arquivo permanece igual
+});
 
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Solicitar recuperação de senha
+ *     tags: [Auth]
+ */
 router.post('/forgot-password', async (req, res) => {
   try {
     const { email } = req.body;
@@ -92,19 +73,16 @@ router.post('/forgot-password', async (req, res) => {
 
     const user = await User.findOne({ where: { email } });
 
-    // Em produção você geraria um token e enviaria e-mail.
-    // Aqui só respondemos 200 mesmo se não existir, por segurança.
+    // Não revela se o e-mail existe ou não, por segurança
     if (!user) {
       return res.json({ message: 'Se o e-mail existir, você receberá instruções em instantes.' });
     }
 
-    // TODO: gerar token de reset e enviar email.
+    // Aqui seria gerado um token e enviado um e-mail. Por enquanto, apenas simula.
     return res.json({ message: 'Se o e-mail existir, você receberá instruções em instantes.' });
   } catch (err) {
     res.status(500).json({ message: 'Erro ao processar recuperação de senha', error: err.message });
   }
-});
-
 });
 
 module.exports = router;
