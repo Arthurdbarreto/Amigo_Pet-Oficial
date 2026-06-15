@@ -11,8 +11,6 @@ Projeto fullstack completo para gerenciamento de petshop com autenticação JWT,
 ✅ Banco de dados SQLite
 ✅ Design responsivo e moderno
 ✅ Fetch API para comunicação frontend-backend
-✅ Filtros avançados para agendamentos
-✅ Cálculo automático de idade de pets
 
 ## 🚀 Como Iniciar
 
