@@ -1,8 +1,8 @@
-﻿# 🐾 AmigoPet - Sistema de Gestão de Petshop
+# AmigoPet - Sistema de Gestão de Petshop
 
 Projeto fullstack completo para gerenciamento de petshop com autenticação JWT, CORS e documentação Swagger.
 
-## 📋 Funcionalidades Implementadas
+📋 Funcionalidades Implementadas
 
 ✅ Autenticação JWT (Login e Registro)
 ✅ CRUD Completo para: Tutores, Pets, Serviços, Produtos, Agendamentos
@@ -11,6 +11,13 @@ Projeto fullstack completo para gerenciamento de petshop com autenticação JWT,
 ✅ Banco de dados SQLite
 ✅ Design responsivo e moderno
 ✅ Fetch API para comunicação frontend-backend
+
+## 🔐 Como acessar o sistema
+
+1. Acesse o frontend em: https://amigo-pet.netlify.app/login.html
+2. Clique em **“Registrar”** para criar um novo usuário.
+3. Faça login com o e-mail e senha cadastrados.
+4. Após o login, você será redirecionado para o **Dashboard do AmigoPet**.﻿# 
 
 ## 🚀 Como Iniciar
 
