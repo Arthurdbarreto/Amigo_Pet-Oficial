@@ -76,6 +76,15 @@ projeto-fullstack-amigopet/
         ├── servicos-img.jpeg
         ├── produtos-img.jpeg
         └── agendamento-img.jpeg
+## Como acessar o sistema
+
+1. Acesse o frontend em: https://amigo-pet.netlify.app/login.html
+2. Clique em “Registrar” para criar um novo usuário.
+3. Faça login com o e-mail e senha cadastrados.
+4. Após o login, você será redirecionado para o Dashboard do AmigoPet.
+
+(A URL deve ser ajustada para a URL real do frontend, se for diferente.)
+
 🔐 Credenciais de Teste
 Após iniciar, crie uma conta em http://localhost:8000/register.html
 
