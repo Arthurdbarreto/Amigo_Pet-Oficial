@@ -1,4 +1,4 @@
-﻿// Proteção de rota
+﻿// Proteção de rota: se o usuário não estiver autenticado retorna ao login
 const token = localStorage.getItem('token');
 if (!token) {
   window.location.href = 'login.html';
@@ -14,25 +14,47 @@ const closeFormBtn = document.getElementById('closeFormBtn');
 const cancelTutorBtn = document.getElementById('cancelTutorBtn');
 const tutorsTableBody = document.getElementById('tutorsTableBody');
 
+// Controla o modo do formulário: null = novo tutor, id = editar tutor existente
 let editingTutorId = null;
 
-// Logout
+// Função para aplicar máscara no campo de telefone do formulário
+// Usa IMask para exibir um exemplo claro do formato esperado
+function applyPhoneMask() {
+  const telefoneInput = document.getElementById('tutorTelefone');
+  if (telefoneInput && window.IMask) {
+    // Garante que não exista uma instância anterior ativa
+    if (telefoneInput._imaskInstance) {
+      telefoneInput._imaskInstance.destroy();
+    }
+    // Cria a máscara com placeholder visível para o usuário
+    telefoneInput._imaskInstance = IMask(telefoneInput, {
+      mask: '(00) 0 0000-0000',
+      lazy: false, // Exibe o formato completo mesmo com o campo vazio
+      placeholderChar: '0' // Exemplo de dígitos no padrão
+    });
+  }
+}
+
+// Evento de logout: limpa o token e redireciona para a tela de login
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem('token');
   localStorage.removeItem('user');
   window.location.href = 'login.html';
 });
 
-// Abrir formulário para novo tutor
+// Abre o formulário para criar um novo tutor
+// Define o modo como criação e aplica máscara ao campo de telefone
 addTutorBtn.addEventListener('click', () => {
   editingTutorId = null;
   tutorFormTitle.textContent = 'Adicionar Tutor';
   tutorForm.reset();
   tutorFormSection.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Aplica máscara ao campo de telefone
+  applyPhoneMask();
 });
 
-// Fechar formulário
+// Fecha o formulário e limpa o modo de edição
 function hideTutorForm() {
   tutorFormSection.classList.add('hidden');
   editingTutorId = null;
@@ -41,7 +63,8 @@ function hideTutorForm() {
 closeFormBtn.addEventListener('click', hideTutorForm);
 cancelTutorBtn.addEventListener('click', hideTutorForm);
 
-// Enviar formulário
+// Tratamento do envio do formulário de tutor
+// Se editingTutorId existir, atualiza tutor; caso contrário, cadastra novo tutor
 tutorForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -69,7 +92,7 @@ tutorForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Carregar lista
+// Busca todos os tutores via API e renderiza a tabela
 async function loadTutors() {
   try {
     const tutors = await getData('tutors');
@@ -80,6 +103,7 @@ async function loadTutors() {
   }
 }
 
+// Renderiza a lista de tutores na tabela do frontend
 function renderTutors(tutors) {
   tutorsTableBody.innerHTML = '';
 
@@ -137,6 +161,8 @@ window.editTutor = async function (id) {
 
     tutorFormSection.classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Aplica máscara ao campo de telefone após carregar dados
+    applyPhoneMask();
   } catch (err) {
     console.error(err);
     alert('Erro ao carregar dados do tutor.');
@@ -155,6 +181,7 @@ window.deleteTutor = async function (id) {
     alert('Erro ao excluir tutor.');
   }
 };
+
 
 // Inicialização
 loadTutors();

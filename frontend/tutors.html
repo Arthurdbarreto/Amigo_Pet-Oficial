@@ -1,10 +1,32 @@
 ﻿<!doctype html>
 <html lang="pt-BR">
 <head>
+  <!-- Página de gestão de tutores do AmigoPet -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tutores - AmigoPet</title>
+  <!-- Estilos utilitários via Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Biblioteca IMask para aplicar máscara no campo de telefone -->
+  <script src="https://cdn.jsdelivr.net/npm/imask@7"></script>
+  <style>
+    /* Estilo para o placeholder do campo de telefone com máscara IMask */
+    #tutorTelefone::placeholder {
+      color: rgb(107, 114, 128); /* Cor cinza igual aos outros inputs (gray-500) */
+      opacity: 1;
+    }
+    
+    /* Garante que o placeholder apareça normalmente em navegadores */
+    #tutorTelefone::-webkit-input-placeholder {
+      color: rgb(107, 114, 128);
+      opacity: 1;
+    }
+    
+    #tutorTelefone::-moz-placeholder {
+      color: rgb(107, 114, 128);
+      opacity: 1;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
@@ -103,9 +125,10 @@
         </div>
 
         <!-- Telefone -->
+        <!-- O campo de telefone utiliza IMask para mostrar o formato esperado ao usuário -->
         <div class="md:col-span-1">
           <label class="block text-sm font-semibold text-gray-700 mb-1" for="tutorTelefone">Telefone</label>
-          <input
+          <input style="color:#A0A0A0;"
             id="tutorTelefone"
             type="tel"
             required
