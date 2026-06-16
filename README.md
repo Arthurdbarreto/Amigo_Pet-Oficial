@@ -179,3 +179,8 @@ Para dúvidas ou problemas:
 Verifique se backend está rodando na porta 3000
 Verifique se frontend está na porta 8000
 Limpe o localStorage se tiver problemas de autenticação
+
+- Arthur Barreto – RA XXX – Responsável por: Frontend (Login, Dashboard, CRUDs e interface do usuário)
+- Filipe Gonçalves – RA XXX – Responsável por: Backend (Rotas, Models, JWT, Banco de Dados e API REST)
+- Gustavo Henrique Cantaruti Scalise – RA XXX – Responsável por: Deploy (Render, Netlify) e Documentação
+- Marcos Bino – RA XXX – Responsável por: UX/UI, Testes e Validação do Sistema
